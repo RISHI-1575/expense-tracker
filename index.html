@@ -1,0 +1,1129 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Tracker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Flatpickr for date picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --light-color: #f9fafb;
+            --dark-color: #111827;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 15px 20px;
+        }
+        
+        .card-title {
+            margin-bottom: 0;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .navbar {
+            background-color: var(--dark-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #d1d5db;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #4b5563;
+        }
+        
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .table thead th {
+            background-color: #f9fafb;
+            color: #4b5563;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .badge {
+            padding: 6px 10px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        .badge-bank {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .badge-cash {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+        
+        .stat-card {
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .stat-card.primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+        
+        .stat-card.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .stat-card.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
+        
+        .nav-tabs .nav-link {
+            color: #6b7280;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background-color: transparent;
+        }
+        
+        .nav-tabs .nav-link:hover:not(.active) {
+            border-color: transparent;
+            color: var(--secondary-color);
+        }
+        
+        .filter-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Category colors */
+        .category-food {
+            color: #059669;
+        }
+        
+        .category-travel {
+            color: #3b82f6;
+        }
+        
+        .category-bills {
+            color: #8b5cf6;
+        }
+        
+        .category-entertainment {
+            color: #ec4899;
+        }
+        
+        .category-shopping {
+            color: #f59e0b;
+        }
+        
+        .category-other {
+            color: #6b7280;
+        }
+        
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        
+        .action-col {
+            white-space: nowrap;
+        }
+        
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            min-width: 300px;
+        }
+        
+        /* Loading Spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            visibility: hidden;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-wallet me-2"></i>
+                Smart Expense Tracker
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <div class="row">
+            <!-- Left Column: Add Expense Form & Reports -->
+            <div class="col-lg-4">
+                <!-- Add Expense Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-plus-circle me-2"></i>Add Expense</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="expense-form">
+                            <input type="hidden" id="expense-id">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="amount" required step="0.01" min="0.01">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment-type" class="form-label">Payment Type</label>
+                                <select class="form-select" id="payment-type" required>
+                                    <option value="Bank">Bank</option>
+                                    <option value="Cash">Cash</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category" required>
+                                    <option value="Food">Food</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Bills">Bills</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="mt-2 d-none" id="custom-category-container">
+                                    <input type="text" class="form-control" id="custom-category" placeholder="Enter custom category">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expense-date" class="form-label">Date</label>
+                                <input type="text" class="form-control" id="expense-date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment (Optional)</label>
+                                <textarea class="form-control" id="comment" rows="2"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary" id="save-expense-btn">
+                                    <i class="fas fa-save me-1"></i> Save Expense
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary d-none" id="cancel-edit-btn">
+                                    <i class="fas fa-times me-1"></i> Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Total Expense Report -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-chart-pie me-2"></i>Total Expense Report</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary period-btn active" data-period="day">Day</button>
+                                <button type="button" class="btn btn-outline-primary period-btn" data-period="week">Week</button>
+                                <button type="button" class="btn btn-outline-primary period-btn" data-period="month">Month</button>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <div class="stat-card primary">
+                                    <div class="stat-value">$<span id="grand-total">0.00</span></div>
+                                    <div class="stat-label">Total Expenses</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card success">
+                                    <div class="stat-value">$<span id="bank-total">0.00</span></div>
+                                    <div class="stat-label">Bank</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card warning">
+                                    <div class="stat-value">$<span id="cash-total">0.00</span></div>
+                                    <div class="stat-label">Cash</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Expense List & Charts -->
+            <div class="col-lg-8">
+                <!-- Expense List & Charts Tabs -->
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses" type="button" role="tab" aria-controls="expenses" aria-selected="true">
+                                    <i class="fas fa-list me-1"></i> Expenses
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category-report" type="button" role="tab" aria-controls="category-report" aria-selected="false">
+                                    <i class="fas fa-chart-pie me-1"></i> Category Report
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="trend-tab" data-bs-toggle="tab" data-bs-target="#monthly-trend" type="button" role="tab" aria-controls="monthly-trend" aria-selected="false">
+                                    <i class="fas fa-chart-line me-1"></i> Monthly Trend
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="myTabContent">
+                            <!-- Expenses Tab -->
+                            <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="expenses-tab">
+                                <!-- Filters -->
+                                <div class="filter-section mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <label for="filter-start-date" class="form-label">Start Date</label>
+                                            <input type="text" class="form-control" id="filter-start-date">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="filter-end-date" class="form-label">End Date</label>
+                                            <input type="text" class="form-control" id="filter-end-date">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="filter-category" class="form-label">Category</label>
+                                            <select class="form-select" id="filter-category">
+                                                <option value="All">All Categories</option>
+                                                <option value="Food">Food</option>
+                                                <option value="Travel">Travel</option>
+                                                <option value="Bills">Bills</option>
+                                                <option value="Entertainment">Entertainment</option>
+                                                <option value="Shopping">Shopping</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 d-flex align-items-end">
+                                            <button class="btn btn-primary w-100" id="apply-filter-btn">
+                                                <i class="fas fa-filter me-1"></i> Apply Filter
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Expenses Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="expenses-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Type</th>
+                                                <th>Category</th>
+                                                <th>Description</th>
+                                                <th>Comment</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Expenses will be dynamically populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Category Report Tab -->
+                            <div class="tab-pane fade" id="category-report" role="tabpanel" aria-labelledby="category-tab">
+                                <div class="filter-section mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <label for="category-start-date" class="form-label">Start Date</label>
+                                            <input type="text" class="form-control" id="category-start-date">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="category-end-date" class="form-label">End Date</label>
+                                            <input type="text" class="form-control" id="category-end-date">
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button class="btn btn-primary w-100" id="update-category-btn">
+                                                <i class="fas fa-sync me-1"></i> Update Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div class="chart-container">
+                                            <div id="category-chart"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm" id="category-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Category</th>
+                                                        <th>Amount</th>
+                                                        <th>Percentage</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Category data will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Monthly Trend Tab -->
+                            <div class="tab-pane fade" id="monthly-trend" role="tabpanel" aria-labelledby="trend-tab">
+                                <div class="filter-section mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <label for="trend-year" class="form-label">Year</label>
+                                            <select class="form-select" id="trend-year">
+                                                <!-- Years will be populated dynamically -->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check form-switch mt-4">
+                                                <input class="form-check-input" type="checkbox" id="show-split">
+                                                <label class="form-check-label" for="show-split">Show Bank/Cash Split</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button class="btn btn-primary w-100" id="update-trend-btn">
+                                                <i class="fas fa-sync me-1"></i> Update Trend
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chart-container">
+                                    <div id="trend-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="delete-modal" tabindex="-1" aria-labelledby="delete-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delete-modal-label">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this expense?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-overlay" id="spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Required JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Main JavaScript -->
+    <script>
+        $(document).ready(function() {
+            // =====================
+            // Global Variables
+            // =====================
+            let expensesTable;
+            let editMode = false;
+            let currentDeleteId = null;
+            
+            // =====================
+            // Initialize Components
+            // =====================
+            
+            // Initialize Date Pickers
+            const today = new Date();
+            
+            // Default form date picker
+            flatpickr("#expense-date", {
+                dateFormat: "Y-m-d",
+                defaultDate: today
+            });
+            
+            // Filter date pickers
+            flatpickr("#filter-start-date", {
+                dateFormat: "Y-m-d"
+            });
+            
+            flatpickr("#filter-end-date", {
+                dateFormat: "Y-m-d"
+            });
+            
+            // Category report date pickers
+            flatpickr("#category-start-date", {
+                dateFormat: "Y-m-d",
+                defaultDate: new Date(today.getFullYear(), today.getMonth(), 1) // First day of current month
+            });
+            
+            flatpickr("#category-end-date", {
+                dateFormat: "Y-m-d",
+                defaultDate: today
+            });
+            
+            // Initialize DataTable
+            expensesTable = $('#expenses-table').DataTable({
+                order: [[0, 'desc']], // Sort by date descending
+                columns: [
+                    { data: 'expense_date' },
+                    { 
+                        data: 'amount',
+                        render: function(data) {
+                            return '$' + parseFloat(data).toFixed(2);
+                        }
+                    },
+                    { 
+                        data: 'payment_type',
+                        render: function(data) {
+                            return `<span class="badge badge-${data.toLowerCase()}">${data}</span>`;
+                        }
+                    },
+                    { 
+                        data: 'category',
+                        render: function(data) {
+                            return `<span class="category-${data.toLowerCase()}">${data}</span>`;
+                        }
+                    },
+                    { data: 'description' },
+                    { data: 'comment' },
+                    { 
+                        data: 'id',
+                        render: function(data) {
+                            return `
+                                <div class="action-col">
+                                    <button class="btn btn-sm btn-outline-primary btn-action edit-expense" data-id="${data}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger btn-action delete-expense" data-id="${data}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
+            
+            // Populate year dropdown for trend report
+            const currentYear = today.getFullYear();
+            for (let year = currentYear - 5; year <= currentYear; year++) {
+                $('#trend-year').append(`<option value="${year}" ${year === currentYear ? 'selected' : ''}>${year}</option>`);
+            }
+            
+            // Initial data loading
+            loadExpensesData();
+            loadTotalReport('month'); // Default to monthly report
+            loadCategoryReport();
+            loadMonthlyTrend();
+            
+            // =====================
+            // Event Handlers
+            // =====================
+            
+            // Form submission handler
+            $('#expense-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const expenseId = $('#expense-id').val();
+                let category = $('#category').val();
+                
+                // Check if custom category is selected
+                if (category === 'Other' && $('#custom-category').val().trim() !== '') {
+                    category = $('#custom-category').val().trim();
+                }
+                
+                const expenseData = {
+                    amount: parseFloat($('#amount').val()),
+                    payment_type: $('#payment-type').val(),
+                    category: category,
+                    expense_date: $('#expense-date').val(),
+                    description: $('#description').val(),
+                    comment: $('#comment').val()
+                };
+                
+                // Show loading spinner
+                showSpinner();
+                
+                // Determine if it's add or update
+                if (editMode) {
+                    // Update existing expense
+                    $.ajax({
+                        url: '/api/expenses/' + expenseId,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(expenseData),
+                        success: function(response) {
+                            showToast('Success', 'Expense updated successfully!', 'success');
+                            resetForm();
+                            refreshAllData();
+                        },
+                        error: function(error) {
+                            showToast('Error', 'Failed to update expense.', 'danger');
+                            console.error('Error updating expense:', error);
+                        },
+                        complete: function() {
+                            hideSpinner();
+                        }
+                    });
+                } else {
+                    // Add new expense
+                    $.ajax({
+                        url: '/api/expenses',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(expenseData),
+                        success: function(response) {
+                            showToast('Success', 'Expense added successfully!', 'success');
+                            resetForm();
+                            refreshAllData();
+                        },
+                        error: function(error) {
+                            showToast('Error', 'Failed to add expense.', 'danger');
+                            console.error('Error adding expense:', error);
+                        },
+                        complete: function() {
+                            hideSpinner();
+                        }
+                    });
+                }
+            });
+            
+            // Category change handler - show/hide custom category input
+            $('#category').on('change', function() {
+                if ($(this).val() === 'Other') {
+                    $('#custom-category-container').removeClass('d-none');
+                } else {
+                    $('#custom-category-container').addClass('d-none');
+                }
+            });
+            
+            // Edit expense button click handler (delegated event)
+            $('#expenses-table').on('click', '.edit-expense', function() {
+                const expenseId = $(this).data('id');
+                
+                // Show loading spinner
+                showSpinner();
+                
+                // Fetch the expense data
+                $.ajax({
+                    url: '/api/expenses',
+                    type: 'GET',
+                    data: {
+                        expense_id: expenseId
+                    },
+                    success: function(data) {
+                        const expense = data.find(exp => exp.id === expenseId);
+                        
+                        if (expense) {
+                            // Populate form
+                            $('#expense-id').val(expense.id);
+                            $('#amount').val(expense.amount);
+                            $('#payment-type').val(expense.payment_type);
+                            
+                            // Handle category
+                            const predefinedCategories = ['Food', 'Travel', 'Bills', 'Entertainment', 'Shopping', 'Other'];
+                            if (predefinedCategories.includes(expense.category)) {
+                                $('#category').val(expense.category);
+                                $('#custom-category-container').addClass('d-none');
+                            } else {
+                                $('#category').val('Other');
+                                $('#custom-category').val(expense.category);
+                                $('#custom-category-container').removeClass('d-none');
+                            }
+                            
+                            $('#expense-date').val(expense.expense_date);
+                            $('#description').val(expense.description);
+                            $('#comment').val(expense.comment);
+                            
+                            // Set form to edit mode
+                            editMode = true;
+                            $('#save-expense-btn').html('<i class="fas fa-save me-1"></i> Update Expense');
+                            $('#cancel-edit-btn').removeClass('d-none');
+                            
+                            // Scroll to form
+                            $('html, body').animate({
+                                scrollTop: $('#expense-form').offset().top - 20
+                            }, 500);
+                        }
+                    },
+                    error: function(error) {
+                        showToast('Error', 'Failed to fetch expense data.', 'danger');
+                        console.error('Error fetching expense:', error);
+                    },
+                    complete: function() {
+                        hideSpinner();
+                    }
+                });
+            });
+            
+            // Cancel edit button click handler
+            $('#cancel-edit-btn').on('click', function() {
+                resetForm();
+            });
+            
+            // Delete expense button click handler (delegation)
+            $('#expenses-table').on('click', '.delete-expense', function() {
+                currentDeleteId = $(this).data('id');
+                $('#delete-modal').modal('show');
+            });
+            
+            // Confirm delete button click handler
+            $('#confirm-delete-btn').on('click', function() {
+                if (currentDeleteId) {
+                    // Show loading spinner
+                    showSpinner();
+                    
+                    // Send delete request
+                    $.ajax({
+                        url: '/api/expenses/' + currentDeleteId,
+                        type: 'DELETE',
+                        success: function() {
+                            showToast('Success', 'Expense deleted successfully!', 'success');
+                            $('#delete-modal').modal('hide');
+                            refreshAllData();
+                        },
+                        error: function(error) {
+                            showToast('Error', 'Failed to delete expense.', 'danger');
+                            console.error('Error deleting expense:', error);
+                        },
+                        complete: function() {
+                            hideSpinner();
+                            currentDeleteId = null;
+                        }
+                    });
+                }
+            });
+            
+            // Apply Filter button click handler
+            $('#apply-filter-btn').on('click', function() {
+                loadExpensesData();
+            });
+            
+            // Period selection (Day/Week/Month) for total expense report
+            $('.period-btn').on('click', function() {
+                $('.period-btn').removeClass('active');
+                $(this).addClass('active');
+                loadTotalReport($(this).data('period'));
+            });
+            
+            // Update Category Report button click handler
+            $('#update-category-btn').on('click', function() {
+                loadCategoryReport();
+            });
+            
+            // Update Monthly Trend button click handler
+            $('#update-trend-btn').on('click', function() {
+                loadMonthlyTrend();
+            });
+            
+            // Tab change events to refresh charts
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const target = $(e.target).attr("data-bs-target");
+                
+                if (target === "#category-report") {
+                    loadCategoryReport();
+                } else if (target === "#monthly-trend") {
+                    loadMonthlyTrend();
+                }
+            });
+            
+            // =====================
+            // Helper Functions
+            // =====================
+            
+            // Load expenses data based on filters
+            function loadExpensesData() {
+                // Show loading spinner
+                showSpinner();
+                
+                // Get filter values
+                const startDate = $('#filter-start-date').val();
+                const endDate = $('#filter-end-date').val();
+                const category = $('#filter-category').val();
+                
+                // Prepare request parameters
+                const params = {};
+                if (startDate && endDate) {
+                    params.start_date = startDate;
+                    params.end_date = endDate;
+                }
+                if (category && category !== 'All') {
+                    params.category = category;
+                }
+                
+                // Fetch data
+                $.ajax({
+                    url: '/api/expenses',
+                    type: 'GET',
+                    data: params,
+                    success: function(data) {
+                        // Clear and reload table
+                        expensesTable.clear();
+                        expensesTable.rows.add(data).draw();
+                    },
+                    error: function(error) {
+                        showToast('Error', 'Failed to load expenses data.', 'danger');
+                        console.error('Error loading expenses:', error);
+                    },
+                    complete: function() {
+                        hideSpinner();
+                    }
+                });
+            }
+            
+            // Load total expense report
+            function loadTotalReport(period) {
+                // Show loading spinner
+                showSpinner();
+                
+                $.ajax({
+                    url: '/api/reports/total',
+                    type: 'GET',
+                    data: {
+                        period: period
+                    },
+                    success: function(data) {
+                        // Update totals
+                        $('#grand-total').text(formatMoney(data.grand_total));
+                        $('#bank-total').text(formatMoney(data.by_type.Bank || 0));
+                        $('#cash-total').text(formatMoney(data.by_type.Cash || 0));
+                    },
+                    error: function(error) {
+                        showToast('Error', 'Failed to load total report.', 'danger');
+                        console.error('Error loading total report:', error);
+                    },
+                    complete: function() {
+                        hideSpinner();
+                    }
+                });
+            }
+            
+            // Load category report
+            function loadCategoryReport() {
+                // Show loading spinner
+                showSpinner();
+                
+                const startDate = $('#category-start-date').val();
+                const endDate = $('#category-end-date').val();
+                
+                // Prepare request parameters
+                const params = {};
+                if (startDate && endDate) {
+                    params.start_date = startDate;
+                    params.end_date = endDate;
+                }
+                
+                $.ajax({
+                    url: '/api/reports/category',
+                    type: 'GET',
+                    data: params,
+                    success: function(response) {
+                        // Update pie chart
+                        const chartDiv = document.getElementById('category-chart');
+                        Plotly.newPlot(chartDiv, JSON.parse(response.chart));
+                        
+                        // Update category table
+                        const data = response.data;
+                        let totalSum = 0;
+                        data.forEach(item => {
+                            totalSum += parseFloat(item.total);
+                        });
+                        
+                        // Clear table
+                        $('#category-table tbody').empty();
+                        
+                        // Add rows
+                        data.forEach(item => {
+                            const percentage = (parseFloat(item.total) / totalSum * 100).toFixed(1);
+                            $('#category-table tbody').append(`
+                                <tr>
+                                    <td><span class="category-${item.category.toLowerCase()}">${item.category}</span></td>
+                                    <td>$${formatMoney(item.total)}</td>
+                                    <td>${percentage}%</td>
+                                </tr>
+                            `);
+                        });
+                    },
+                    error: function(error) {
+                        showToast('Error', 'Failed to load category report.', 'danger');
+                        console.error('Error loading category report:', error);
+                    },
+                    complete: function() {
+                        hideSpinner();
+                    }
+                });
+            }
+            
+            // Load monthly trend
+            function loadMonthlyTrend() {
+                // Show loading spinner
+                showSpinner();
+                
+                const year = $('#trend-year').val();
+                const showSplit = $('#show-split').is(':checked');
+                
+                $.ajax({
+                    url: '/api/reports/monthly-trend',
+                    type: 'GET',
+                    data: {
+                        year: year,
+                        show_split: showSplit
+                    },
+                    success: function(response) {
+                        // Update trend chart
+                        const chartDiv = document.getElementById('trend-chart');
+                        Plotly.newPlot(chartDiv, JSON.parse(response.chart));
+                    },
+                    error: function(error) {
+                        showToast('Error', 'Failed to load monthly trend.', 'danger');
+                        console.error('Error loading monthly trend:', error);
+                    },
+                    complete: function() {
+                        hideSpinner();
+                    }
+                });
+            }
+            
+            // Reset form to add mode
+            function resetForm() {
+                $('#expense-form')[0].reset();
+                $('#expense-id').val('');
+                $('#custom-category-container').addClass('d-none');
+                editMode = false;
+                $('#save-expense-btn').html('<i class="fas fa-save me-1"></i> Save Expense');
+                $('#cancel-edit-btn').addClass('d-none');
+                
+                // Reset date to today
+                const today = new Date();
+                $('#expense-date')[0]._flatpickr.setDate(today);
+            }
+            
+            // Refresh all data
+            function refreshAllData() {
+                loadExpensesData();
+                loadTotalReport($('.period-btn.active').data('period'));
+                loadCategoryReport();
+                loadMonthlyTrend();
+            }
+            
+            // Show toast notification
+            function showToast(title, message, type) {
+                const toastId = 'toast-' + Date.now();
+                const toast = `
+                    <div class="toast bg-${type === 'danger' ? 'danger' : type === 'success' ? 'success' : 'primary'} text-white" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">${title}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                
+                $('#toast-container').append(toast);
+                const toastElement = new bootstrap.Toast(document.getElementById(toastId), {
+                    delay: 3000
+                });
+                toastElement.show();
+                
+                // Remove toast element after it's hidden
+                $(`#${toastId}`).on('hidden.bs.toast', function() {
+                    $(this).remove();
+                });
+            }
+            
+            // Format money value
+            function formatMoney(value) {
+                return parseFloat(value || 0).toFixed(2);
+            }
+            
+            // Show loading spinner
+            function showSpinner() {
+                $('#spinner').css('visibility', 'visible');
+            }
+            
+            // Hide loading spinner
+            function hideSpinner() {
+                $('#spinner').css('visibility', 'hidden');
+            }
+        });
+    </script>
+</body>
+</html>
